@@ -3,17 +3,17 @@ import { gptConnect } from './api/gpt';
 import DiaryInput from './components/DiaryInput';
 import styled from 'styled-components';
 import DiaryDisplay from './components/DiaryDisplay';
+import { message } from 'antd';
 
 const dummyData = JSON.parse(
   `{ "title": "Diary Title", "thumbnail": "https://source.unsplash.com/1600x900/?coding", "summary": "Here would be summary of diary", "emotional_content": "Here would be content of diary", "emotional_result": "Here would be result of diary", "analysis": "Here would be analysis of diary", "action_list": ["Action no.1", "Action no.2", "Action no.3"] }`
 );
 
 
-
-
 function App() {
-  const [data, setData] = useState(dummyData);
+  const [ data, setData ] = useState(dummyData);
   const [ loading, setLoading ] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const handleGPT = async(userInput)=> {
     try{
@@ -24,6 +24,10 @@ function App() {
       setData(JSON.parse(message));
     }catch(err){
       console.error(err);
+      messageApi.open({
+        type: "error",
+        content: err?.message || "Something went wrong.",
+      });
     }finally{
       setLoading(false);
     }
@@ -36,6 +40,7 @@ function App() {
 
   return (
     <AppContainer>
+    {contextHolder}
       <AppTitle>
         AI Psychology Diary
       </AppTitle>
